@@ -1,0 +1,69 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Set plot style
+sns.set(style="whitegrid")
+
+# Load the Titanic dataset
+titanic = pd.read_csv('titanic.csv')
+
+# Data Cleaning
+titanic['Age'].fillna(titanic['Age'].median(), inplace=True)
+titanic['Embarked'].fillna(titanic['Embarked'].mode()[0], inplace=True)
+titanic.drop(columns=['Cabin'], inplace=True)
+titanic.dropna(subset=['Fare'], inplace=True)
+titanic['Sex'] = titanic['Sex'].astype('category')
+titanic['Embarked'] = titanic['Embarked'].astype('category')
+titanic['FamilySize'] = titanic['SibSp'] + titanic['Parch'] + 1
+
+# EDA
+# Summary statistics
+print(titanic.describe(include='all'))
+
+# Age distribution
+plt.figure(figsize=(10, 6))
+sns.histplot(titanic['Age'], bins=30, kde=True, color='skyblue')
+plt.title('Age Distribution')
+plt.xlabel('Age')
+plt.ylabel('Frequency')
+plt.show()
+
+# Gender distribution
+plt.figure(figsize=(8, 6))
+sns.countplot(data=titanic, x='Sex', palette='viridis')
+plt.title('Gender Distribution')
+plt.xlabel('Sex')
+plt.ylabel('Count')
+plt.show()
+
+# Survival rate by gender
+plt.figure(figsize=(8, 6))
+sns.barplot(data=titanic, x='Sex', y='Survived', palette='viridis')
+plt.title('Survival Rate by Gender')
+plt.xlabel('Sex')
+plt.ylabel('Survival Rate')
+plt.show()
+
+# Survival rate by class
+plt.figure(figsize=(8, 6))
+sns.barplot(data=titanic, x='Pclass', y='Survived', palette='coolwarm')
+plt.title('Survival Rate by Class')
+plt.xlabel('Class')
+plt.ylabel('Survival Rate')
+plt.show()
+
+# Survival rate by age
+plt.figure(figsize=(10, 6))
+sns.histplot(data=titanic, x='Age', hue='Survived', multiple='stack', palette='coolwarm', kde=True)
+plt.title('Survival Rate by Age')
+plt.xlabel('Age')
+plt.ylabel('Count')
+plt.show()
+
+# Correlation heatmap
+plt.figure(figsize=(10, 8))
+sns.heatmap(titanic.corr(), annot=True, cmap='coolwarm', fmt='.2f')
+plt.title('Correlation Heatmap')
+plt.show()
